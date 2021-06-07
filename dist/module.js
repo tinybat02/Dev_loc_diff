@@ -78701,7 +78701,7 @@ function (_super) {
       var current = this.state.current;
 
       if (current != 'None' && perDevice[current]) {
-        this.deviceLayer = Object(_util_helper__WEBPACK_IMPORTED_MODULE_9__["create_dev_diff"])(perDevice[current]);
+        this.deviceLayer = Object(_util_helper__WEBPACK_IMPORTED_MODULE_9__["create_dev_diff"])(perDevice[current], current);
         this.map.addLayer(this.deviceLayer);
       }
     }
@@ -78730,7 +78730,7 @@ function (_super) {
       // this.map.removeLayer(this.heatLayer);
       this.map.removeLayer(this.deviceLayer);
       if (this.state.current == 'None') return;
-      this.deviceLayer = Object(_util_helper__WEBPACK_IMPORTED_MODULE_9__["create_dev_diff"])(this.perDevice[this.state.current]);
+      this.deviceLayer = Object(_util_helper__WEBPACK_IMPORTED_MODULE_9__["create_dev_diff"])(this.perDevice[this.state.current], this.state.current);
       this.map.addLayer(this.deviceLayer);
     }
   };
@@ -78825,7 +78825,7 @@ var defaults = {
 /*!************************!*\
   !*** ./util/helper.ts ***!
   \************************/
-/*! exports provided: processData, createPoint, createLine, create_dev_diff, createPointLayer */
+/*! exports provided: processData, createPoint, createLine, create_dev_diff */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -78834,7 +78834,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPoint", function() { return createPoint; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createLine", function() { return createLine; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "create_dev_diff", function() { return create_dev_diff; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createPointLayer", function() { return createPointLayer; });
 /* harmony import */ var ol_Feature__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ol/Feature */ "../node_modules/ol/Feature.js");
 /* harmony import */ var ol_geom_Point__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ol/geom/Point */ "../node_modules/ol/geom/Point.js");
 /* harmony import */ var ol_geom_LineString__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ol/geom/LineString */ "../node_modules/ol/geom/LineString.js");
@@ -78894,7 +78893,7 @@ var createPoint = function createPoint(coord, color) {
   }));
   return pointFeature;
 };
-var createLine = function createLine(p1, p2, length) {
+var createLine = function createLine(p1, p2, label) {
   var lineFeature = new ol_Feature__WEBPACK_IMPORTED_MODULE_0__["default"](new ol_geom_LineString__WEBPACK_IMPORTED_MODULE_2__["default"]([p1, p2]).transform('EPSG:4326', 'EPSG:3857'));
   lineFeature.setStyle([new ol_style__WEBPACK_IMPORTED_MODULE_6__["Style"]({
     stroke: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Stroke"]({
@@ -78907,48 +78906,19 @@ var createLine = function createLine(p1, p2, length) {
         width: 1
       }),
       font: '18px Calibri,sans-serif',
-      text: length.toFixed(2) + " m"
+      text: label
     })
   })]);
   return lineFeature;
 };
-var create_dev_diff = function create_dev_diff(data) {
+var create_dev_diff = function create_dev_diff(data, device) {
   var p1 = createPoint(data.point1, '#fd540b');
   var p2 = createPoint(data.point2, '#0ba1fd');
-  var line = createLine(data.point1, data.point2, haversine_distance__WEBPACK_IMPORTED_MODULE_5___default()(data.point1, data.point2));
+  var distance = haversine_distance__WEBPACK_IMPORTED_MODULE_5___default()(data.point1, data.point2).toFixed(2);
+  var line = createLine(data.point1, data.point2, device + " - " + distance + " m");
   return new ol_layer_Vector__WEBPACK_IMPORTED_MODULE_4__["default"]({
     source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_3__["default"]({
       features: [p1, p2, line]
-    }),
-    zIndex: 3
-  });
-};
-var createPointLayer = function createPointLayer(latlon, label) {
-  var pointFeature = new ol_Feature__WEBPACK_IMPORTED_MODULE_0__["default"](new ol_geom_Point__WEBPACK_IMPORTED_MODULE_1__["default"](latlon).transform('EPSG:4326', 'EPSG:3857'));
-  return new ol_layer_Vector__WEBPACK_IMPORTED_MODULE_4__["default"]({
-    source: new ol_source_Vector__WEBPACK_IMPORTED_MODULE_3__["default"]({
-      features: [pointFeature]
-    }),
-    style: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Style"]({
-      image: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Circle"]({
-        radius: 5,
-        fill: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Fill"]({
-          color: 'rgba(255, 255, 255, 0.7)'
-        }),
-        stroke: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Stroke"]({
-          color: '#00b2ae',
-          width: 2
-        })
-      }),
-      text: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Text"]({
-        stroke: new ol_style__WEBPACK_IMPORTED_MODULE_6__["Stroke"]({
-          color: '#fff',
-          width: 2
-        }),
-        font: '14px Calibri,sans-serif',
-        text: label,
-        offsetY: -12
-      })
     }),
     zIndex: 3
   });

@@ -64,7 +64,7 @@ export const createPoint = (coord: Coordinate, color: string) => {
   return pointFeature;
 };
 
-export const createLine = (p1: Coordinate, p2: Coordinate, length: number) => {
+export const createLine = (p1: Coordinate, p2: Coordinate, label: string) => {
   const lineFeature = new Feature(new LineString([p1, p2]).transform('EPSG:4326', 'EPSG:3857'));
   lineFeature.setStyle([
     new Style({
@@ -78,53 +78,22 @@ export const createLine = (p1: Coordinate, p2: Coordinate, length: number) => {
           width: 1,
         }),
         font: '18px Calibri,sans-serif',
-        text: `${length.toFixed(2)} m`,
+        text: label,
       }),
     }),
   ]);
   return lineFeature;
 };
 
-export const create_dev_diff = (data: { point1: [number, number]; point2: [number, number] }) => {
+export const create_dev_diff = (data: { point1: [number, number]; point2: [number, number] }, device: string) => {
   const p1 = createPoint(data.point1, '#fd540b');
   const p2 = createPoint(data.point2, '#0ba1fd');
 
-  const line = createLine(data.point1, data.point2, haversine(data.point1, data.point2));
+  const distance = haversine(data.point1, data.point2).toFixed(2);
+  const line = createLine(data.point1, data.point2, `${device} - ${distance} m`);
   return new VectorLayer({
     source: new VectorSource({
       features: [p1, p2, line],
-    }),
-    zIndex: 3,
-  });
-};
-
-export const createPointLayer = (latlon: Coordinate, label: string) => {
-  const pointFeature = new Feature(new Point(latlon).transform('EPSG:4326', 'EPSG:3857'));
-
-  return new VectorLayer({
-    source: new VectorSource({
-      features: [pointFeature],
-    }),
-    style: new Style({
-      image: new CircleStyle({
-        radius: 5,
-        fill: new Fill({
-          color: 'rgba(255, 255, 255, 0.7)',
-        }),
-        stroke: new Stroke({
-          color: '#00b2ae',
-          width: 2,
-        }),
-      }),
-      text: new Text({
-        stroke: new Stroke({
-          color: '#fff',
-          width: 2,
-        }),
-        font: '14px Calibri,sans-serif',
-        text: label,
-        offsetY: -12,
-      }),
     }),
     zIndex: 3,
   });

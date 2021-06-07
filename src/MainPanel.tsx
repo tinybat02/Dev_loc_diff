@@ -89,7 +89,7 @@ export class MainPanel extends PureComponent<Props, State> {
       this.setState({ options: Object.keys(perDevice) });
       const { current } = this.state;
       if (current != 'None' && perDevice[current]) {
-        this.deviceLayer = create_dev_diff(perDevice[current]);
+        this.deviceLayer = create_dev_diff(perDevice[current], current);
         this.map.addLayer(this.deviceLayer);
       }
     }
@@ -125,7 +125,7 @@ export class MainPanel extends PureComponent<Props, State> {
       this.map.removeLayer(this.deviceLayer);
       if (this.state.current == 'None') return;
 
-      this.deviceLayer = create_dev_diff(this.perDevice[this.state.current]);
+      this.deviceLayer = create_dev_diff(this.perDevice[this.state.current], this.state.current);
       this.map.addLayer(this.deviceLayer);
     }
   }
