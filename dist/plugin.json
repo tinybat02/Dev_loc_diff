@@ -1,0 +1,21 @@
+{
+  "type": "panel",
+  "name": "Dev Loc Diff",
+  "id": "id-device-loc-diff",
+  "dataFormats": ["table"],
+  "info": {
+    "description": "Device Loc Diff",
+    "author": {
+      "name": "Nam Le"
+    },
+    "keywords": [],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2021-06-07"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}
